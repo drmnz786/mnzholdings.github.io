@@ -1,0 +1,1 @@
+User-agent: *\nDisallow: /private/\nDisallow: /admin/\nDisallow: /dashboard/\nDisallow: /api/\nAllow: /public/\nAllow: /offerwall.html\nAllow: /index.html\nAllow: /crypto.html\nAllow: /helpdesk.html\n\nSitemap: https://mnzholdings.com/sitemap.xml
