@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Signup - MNZ Digital State</title>
+  <link href="tailwind.css" rel="stylesheet">
+</head>
+<body class="h-full bg-gradient-to-br from-gray-900 to-black text-white">
+  <!-- Navigation -->
+  <nav class="flex items-center justify-between p-6">
+    <div class="flex items-center">
+      <a href="index.html" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">MNZ DIGITAL STATE</a>
+    </div>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-blue-400 transition-colors">Home</a>
+      <a href="email.html" class="text-blue-400 font-medium">Email</a>
+      <a href="webdevelopment.html" class="hover:text-blue-400 transition-colors">Web Dev</a>
+      <a href="offerwall.html" class="hover:text-blue-400 transition-colors">Earn</a>
+      <a href="crypto.html" class="hover:text-blue-400 transition-colors">Trade</a>
+    </div>
+    <div>
+      <a href="dashboard.html" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md font-medium transition-colors">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-10">
+    <h1 class="text-4xl font-bold mb-2 text-center">Sovereign Email Service</h1>
+    <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+      Create your secure, quantum-protected email address with MNZ Digital State. Choose from our premium domains.
+    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Email Creation Form -->
+      <div class="bg-gray-800 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Create New Email</h2>
+        
+        <form id="emailForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+            <input type="text" id="username" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="yourname">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Domain</label>
+            <select id="domain" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="@mnzholdings.com">@mnzholdings.com</option>
+              <option value="@mnzgov.com">@mnzgov.com</option>
+              <option value="@mnzdigital.com">@mnzdigital.com</option>
+              <option value="@digitalstate.com">@digitalstate.com</option>
+              <option value="@quantum.tech">@quantum.tech</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <input type="password" id="password" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Secure password">
+          </div>
+          
+          <div class="flex items-center">
+            <input type="checkbox" id="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700">
+            <label for="terms" class="ml-2 block text-sm text-gray-300">
+              I agree to the <a href="#" class="text-blue-400 hover:text-blue-300">Email Terms</a>
+            </label>
+          </div>
+          
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium">
+            Create Email Account
+          </button>
+        </form>
+      </div>
+      
+      <!-- Domain Information -->
+      <div class="bg-gray-800 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Premium Domains</h2>
+        
+        <div class="space-y-4">
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <h3 class="font-medium text-blue-400">@mnzholdings.com</h3>
+            <p class="text-sm text-gray-300 mt-1">Professional business email with enterprise-grade security</p>
+          </div>
+          
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <h3 class="font-medium text-purple-400">@mnzgov.com</h3>
+            <p class="text-sm text-gray-300 mt-1">Sovereign identity with government-grade encryption</p>
+          </div>
+          
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <h3 class="font-medium text-green-400">@quantum.tech</h3>
+            <p class="text-sm text-gray-300 mt-1">Future-proof quantum-resistant email technology</p>
+          </div>
+        </div>
+        
+        <div class="mt-6 bg-blue-900 bg-opacity-20 p-4 rounded-lg">
+          <h3 class="font-medium text-blue-400 mb-2">Features</h3>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• 10GB Secure Storage</li>
+            <li>• Quantum Encryption</li>
+            <li>• Zero-Knowledge Architecture</li>
+            <li>• Cross-Platform Sync</li>
+            <li>• AI-Powered Spam Protection</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/email.js"></script>
+</body>
+</html>

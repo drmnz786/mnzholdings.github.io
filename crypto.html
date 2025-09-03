@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Integration - MNZ Digital State</title>
+  <link href="tailwind.css" rel="stylesheet">
+</head>
+<body class="h-full bg-gradient-to-br from-gray-900 to-black text-white">
+  <!-- Navigation -->
+  <nav class="flex items-center justify-between p-6">
+    <div class="flex items-center">
+      <a href="index.html" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">MNZ DIGITAL STATE</a>
+    </div>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-blue-400 transition-colors">Home</a>
+      <a href="offerwall.html" class="hover:text-blue-400 transition-colors">Earn</a>
+      <a href="crypto.html" class="text-blue-400 font-medium">Crypto</a>
+      <a href="helpdesk.html" class="hover:text-blue-400 transition-colors">Support</a>
+    </div>
+    <div>
+      <a href="dashboard.html" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md font-medium transition-colors">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-10">
+    <h1 class="text-4xl font-bold mb-8 text-center">Crypto Integration</h1>
+    <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+      Manage your cryptocurrency assets, track market data, and connect your wallets through our secure Binance API integration.
+    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Market Data -->
+      <div class="lg:col-span-2 bg-gray-800 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Live Market Data</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-700">
+            <thead>
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Coin</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Price</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">24h Change</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Market Cap</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700" id="crypto-table">
+              <tr>
+                <td colspan="4" class="px-4 py-4 text-center text-gray-400">Loading market data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Wallet Connection -->
+      <div class="bg-gray-800 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Wallet Connection</h2>
+        <div class="mb-6">
+          <h3 class="text-lg font-medium mb-3">Connect Your Wallet</h3>
+          <div class="space-y-3">
+            <button class="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span class="mr-2">🔵</span> MetaMask
+            </button>
+            <button class="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span class="mr-2">🟠</span> Binance Chain Wallet
+            </button>
+            <button class="w-full flex items-center justify-center px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span class="mr-2">🟣</span> Trust Wallet
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-medium mb-3">Binance API Integration</h3>
+          <p class="text-gray-400 text-sm mb-4">Connect your Binance account for direct trading and portfolio tracking.</p>
+          <button class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-md font-medium">
+            Connect Binance API
+          </button>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium mb-3">Payment Methods</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-gray-900 p-3 rounded text-center">
+              <div class="text-2xl mb-1">💵</div>
+              <div class="text-xs">USDT</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded text-center">
+              <div class="text-2xl mb-1">⭐</div>
+              <div class="text-xs">XLM</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded text-center">
+              <div class="text-2xl mb-1">₿</div>
+              <div class="text-xs">BTC</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded text-center">
+              <div class="text-2xl mb-1">Ξ</div>
+              <div class="text-xs">ETH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Summary -->
+    <div class="mt-8 bg-gray-800 rounded-lg p-6">
+      <h2 class="text-2xl font-bold mb-6">Your Crypto Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-gray-900 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-400">Total Balance</span>
+            <span class="text-green-400 font-medium" id="total-balance">$0.00</span>
+          </div>
+          <div class="text-xs text-gray-500">24h change: <span id="balance-change">0.00%</span></div>
+        </div>
+        <div class="bg-gray-900 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-400">BTC</span>
+            <span class="text-gray-300" id="btc-balance">0.000000</span>
+          </div>
+          <div class="text-xs text-gray-500">$<span id="btc-value">0.00</span></div>
+        </div>
+        <div class="bg-gray-900 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-400">ETH</span>
+            <span class="text-gray-300" id="eth-balance">0.000000</span>
+          </div>
+          <div class="text-xs text-gray-500">$<span id="eth-value">0.00</span></div>
+        </div>
+        <div class="bg-gray-900 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-400">USDT</span>
+            <span class="text-gray-300" id="usdt-balance">0.00</span>
+          </div>
+          <div class="text-xs text-gray-500">Stablecoin</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/crypto.js"></script>
+</body>
+</html>

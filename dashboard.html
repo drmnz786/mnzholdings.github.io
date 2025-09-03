@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MNZ Digital State</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-bg: #0f172a;
+      --darker-bg: #0a0f1d;
+      --card-bg: rgba(30, 41, 59, 0.5);
+      --card-border: rgba(255, 255, 255, 0.1);
+    }
+    
+    body {
+      background: var(--dark-bg);
+      color: #e2e8f0;
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    #threejs-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+    }
+    
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+    }
+    
+    .gradient-text {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Error message styling */
+    .error-message {
+      background: rgba(239, 68, 68, 0.2);
+      border-left: 4px solid rgb(239, 68, 68);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen">
+  <!-- Three.js Background -->
+  <div id="threejs-bg"></div>
+
+  <!-- Error message container (initially hidden) -->
+  <div id="error-message" class="error-message fixed top-4 right-4 w-80 z-50 hidden">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <h3 class="font-bold text-red-300" id="error-title">Error</h3>
+        <p class="text-sm mt-1 text-red-200" id="error-text"></p>
+      </div>
+      <button onclick="document.getElementById('error-message').classList.add('hidden')" class="text-red-300 hover:text-red-100 ml-4">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-40">
+    <div class="text-center">
+      <div class="loading mx-auto mb-4" style="width: 40px; height: 40px;"></div>
+      <h2 class="text-xl font-semibold text-white">Loading Dashboard</h2>
+      <p class="text-gray-400 mt-2" id="loading-text">Initializing components...</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex items-center justify-between p-6 glass-card mx-6 mt-4">
+    <div class="flex items-center">
+      <a href="index.html" class="text-2xl font-bold gradient-text">MNZ DIGITAL STATE</a>
+    </div>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-blue-400 transition-colors">Home</a>
+      <a href="offerwall.html" class="hover:text-blue-400 transition-colors">Earn</a>
+      <a href="crypto.html" class="hover:text-blue-400 transition-colors">Crypto</a>
+      <a href="helpdesk.html" class="hover:text-blue-400 transition-colors">Support</a>
+    </div>
+    <div class="flex items-center">
+      <span class="text-gray-400 mr-4 hidden md:block" id="user-email">user@example.com</span>
+      <button id="logout-btn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md font-medium transition-colors">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-10">
+    <div class="flex flex-col md:flex-row justify-between items-start mb-10">
+      <div>
+        <h1 class="text-4xl font-bold mb-2 gradient-text">Sovereign Dashboard</h1>
+        <p class="text-gray-400">Welcome back to your MNZ Digital State cockpit</p>
+      </div>
+      <div class="mt-4 md:mt-0 flex space-x-3">
+        <button id="refresh-btn" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-4 py-2 rounded-md font-medium text-white flex items-center">
+          <span>Refresh Data</span>
+          <span id="refresh-icon" class="ml-2 hidden loading"></span>
+        </button>
+        <button class="border border-gray-600 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-md font-medium">
+          Settings
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Earnings Overview -->
+      <div class="lg:col-span-2 glass-card p-6 floating">
+        <h2 class="text-2xl font-bold mb-6 gradient-text">Earnings Overview</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="stat-card bg-gray-900 p-4 rounded-lg text-center pulse">
+            <div class="text-3xl font-bold text-green-400" id="total-earned">$0.00</div>
+            <div class="text-gray-400 mt-1">Total Earned</div>
+          </div>
+          <div class="stat-card bg-gray-900 p-4 rounded-lg text-center pulse">
+            <div class="text-3xl font-bold text-blue-400" id="available-cash">$0.00</div>
+            <div class="text-gray-400 mt-1">Available</div>
+          </div>
+          <div class="stat-card bg-gray-900 p-4 rounded-lg text-center pulse">
+            <div class="text-3xl font-bold text-yellow-400" id="pending-cash">$0.00</div>
+            <div class="text-gray-400 mt-1">Pending</div>
+          </div>
+          <div class="stat-card bg-gray-900 p-4 rounded-lg text-center pulse">
+            <div class="text-3xl font-bold text-purple-400" id="withdrawn-cash">$0.00</div>
+            <div class="text-gray-400 mt-1">Withdrawn</div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 p-4 rounded-lg">
+          <h3 class="text-lg font-medium mb-4">Recent Activity</h3>
+          <div class="space-y-3" id="recent-activity">
+            <div class="text-center py-4 text-gray-400" id="no-activity">
+              <div class="loading mx-auto mb-2"></div>
+              Loading activities...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Summary -->
+      <div class="glass-card p-6 floating">
+        <h2 class="text-2xl font-bold mb-6 gradient-text">Account Summary</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium mb-3">Profile Information</h3>
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center mr-4">
+                <span class="text-xl">👤</span>
+              </div>
+              <div>
+                <div class="font-medium" id="profile-username">username</div>
+                <div class="text-sm text-gray-400" id="profile-email">user@example.com</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="text-gray-400">Member since:</div>
+              <div id="member-since">Jan 2023</div>
+              <div class="text-gray-400">Status:</div>
+              <div class="text-green-400">Active</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-medium mb-3">Withdrawal Options</h3>
+          <div class="space-y-2">
+            <button class="w-full flex items-center justify-between px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span>PayPal</span>
+              <span class="text-blue-400">→</span>
+            </button>
+            <button class="w-full flex items-center justify-between px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span>USDT (TRC-20)</span>
+              <span class="text-blue-400">→</span>
+            </button>
+            <button class="w-full flex items-center justify-between px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span>XLM</span>
+              <span class="text-blue-400">→</span>
+            </button>
+            <button class="w-full flex items-center justify-between px-4 py-2 border border-gray-600 rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600">
+              <span>Gift Cards</span>
+              <span class="text-blue-400">→</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium mb-3">Account Security</h3>
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-400">2FA Enabled</span>
+              <span class="text-red-400">No</span>
+            </div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-400">Email Verified</span>
+              <span class="text-green-400">Yes</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-400">Last Login</span>
+              <span class="text-sm text-gray-400" id="last-login">Recently</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Statistics -->
+    <div class="mt-8 glass-card p-6 floating">
+      <h2 class="text-2xl font-bold mb-6 gradient-text">Platform Statistics</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card bg-gray-900 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div class="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center mr-3">
+              <span class="text-sm">📊</span>
+            </div>
+            <div>
+              <div class="font-medium">CPX Research</div>
+              <div class="text-xs text-gray-400">Earnings: <span class="text-green-400" id="cpx-earnings">$0.00</span></div>
+            </div>
+          </div>
+          <div class="text-sm text-gray-400 mt-2">Surveys: <span id="cpx-surveys">0</span></div>
+        </div>
+        <div class="stat-card bg-gray-900 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div class="w-8 h-8 bg-purple-900 rounded-full flex items-center justify-center mr-3">
+              <span class="text-sm">🧠</span>
+            </div>
+            <div>
+              <div class="font-medium">Bitlabs</div>
+              <div class="text-xs text-gray-400">Earnings: <span class="text-green-400" id="bitlabs-earnings">$0.00</span></div>
+            </div>
+          </div>
+          <div class="text-sm text-gray-400 mt-2">Tasks: <span id="bitlabs-tasks">0</span></div>
+        </div>
+        <div class="stat-card bg-gray-900 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div class="w-8 h-8 bg-green-900 rounded-full flex items-center justify-center mr-3">
+              <span class="text-sm">💰</span>
+            </div>
+            <div>
+              <div class="font-medium">Freecash</div>
+              <div class="text-xs text-gray-400">Earnings: <span class="text-green-400" id="freecash-earnings">$0.00</span></div>
+            </div>
+          </div>
+          <div class="text-sm text-gray-400 mt-2">Offers: <span id="freecash-offers">0</span></div>
+        </div>
+        <div class="stat-card bg-gray-900 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div class="w-8 h-8 bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+              <span class="text-sm">📝</span>
+            </div>
+            <div>
+              <div class="font-medium">Poll Pay</div>
+              <div class="text-xs text-gray-400">Earnings: <span class="text-green-400" id="pollpay-earnings">$0.00</span></div>
+            </div>
+          </div>
+          <div class="text-sm text-gray-400 mt-2">Polls: <span id="pollpay-polls">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings Chart -->
+    <div class="mt-8 glass-card p-6">
+      <h2 class="text-2xl font-bold mb-6 gradient-text">Earnings History</h2>
+      <canvas id="earningsChart" height="100"></canvas>
+    </div>
+  </main>
+
+  <script>
+    // Global error handling
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e.error);
+      showError('Application Error', 'An unexpected error occurred. Please try refreshing the page.');
+    });
+    
+    // Initialize Three.js background
+    function initParticleBackground(elementId) {
+      try {
+        const container = document.getElementById(elementId);
+        if (!container) {
+          throw new Error('Three.js container not found');
+        }
+        
+        // Clear any existing canvas
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        
+        // Set up the scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        
+        const posArray = new Float32Array(particlesCount * 3);
+        const colorArray = new Float32Array(particlesCount * 3);
+        
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+            colorArray[i] = Math.random();
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+        
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        camera.position.z = 5;
+        
+        // Mouse movement effect
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particlesMesh.rotation.x += 0.0005;
+            particlesMesh.rotation.y += 0.001;
+            
+            // Move particles based on mouse position
+            particlesMesh.position.x = mouseX * 0.5;
+            particlesMesh.position.y = mouseY * 0.5;
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('Three.js initialization failed:', error);
+        showError('Background Effect', 'The animated background could not be loaded, but the dashboard will still function correctly.');
+        return false;
+      }
+    }
+    
+    // Initialize earnings chart
+    function initEarningsChart() {
+      try {
+        const ctx = document.getElementById('earningsChart');
+        if (!ctx) {
+          throw new Error('Chart canvas not found');
+        }
+        
+        // Clear any existing chart
+        const chartStatus = Chart.getChart("earningsChart");
+        if (chartStatus != undefined) {
+          chartStatus.destroy();
+        }
+        
+        // Generate sample data for the last 6 months
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const currentMonth = new Date().getMonth();
+        const labels = [];
+        const data = [];
+        
+        for (let i = 5; i >= 0; i--) {
+          const monthIndex = (currentMonth - i + 12) % 12;
+          labels.push(months[monthIndex]);
+          data.push(Math.floor(Math.random() * 30) + 10);
+        }
+        
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Earnings ($)',
+              data: data,
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#e2e8f0'
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                  color: '#e2e8f0'
+                }
+              },
+              x: {
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                  color: '#e2e8f0'
+                }
+              }
+            }
+          }
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('Chart initialization failed:', error);
+        showError('Chart Error', 'The earnings chart could not be loaded.');
+        return false;
+      }
+    }
+    
+    // Show error message
+    function showError(title, message) {
+      const errorEl = document.getElementById('error-message');
+      document.getElementById('error-title').textContent = title;
+      document.getElementById('error-text').textContent = message;
+      errorEl.classList.remove('hidden');
+      
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        errorEl.classList.add('hidden');
+      }, 10000);
+    }
+    
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      localStorage.removeItem('mnz_user');
+      window.location.href = 'index.html';
+    });
+    
+    // Refresh data functionality
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+      const refreshIcon = document.getElementById('refresh-icon');
+      refreshIcon.classList.remove('hidden');
+      
+      // Simulate data refresh
+      setTimeout(() => {
+        loadUserData();
+        loadPlatformStats();
+        initEarningsChart();
+        loadRecentActivity();
+        refreshIcon.classList.add('hidden');
+        
+        // Show success feedback
+        showError('Refresh Complete', 'Dashboard data has been successfully updated.');
+      }, 1500);
+    });
+    
+    // Load recent activity
+    function loadRecentActivity() {
+      try {
+        const activityContainer = document.getElementById('recent-activity');
+        const noActivity = document.getElementById('no-activity');
+        
+        // Clear existing content
+        activityContainer.innerHTML = '';
+        
+        // Sample activities
+        const activities = [
+          { platform: 'CPX Research', type: 'Survey', amount: 2.50, time: '2 hours ago' },
+          { platform: 'Bitlabs', type: 'Task', amount: 1.75, time: '5 hours ago' },
+          { platform: 'Freecash', type: 'Offer', amount: 5.20, time: 'Yesterday' },
+          { platform: 'Poll Pay', type: 'Poll', amount: 0.75, time: '2 days ago' }
+        ];
+        
+        if (activities.length === 0) {
+          noActivity.classList.remove('hidden');
+          activityContainer.appendChild(noActivity);
+          return;
+        }
+        
+        noActivity.classList.add('hidden');
+        
+        activities.forEach(activity => {
+          const activityEl = document.createElement('div');
+          activityEl.className = 'flex justify-between items-center py-2 border-b border-gray-800';
+          activityEl.innerHTML = `
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                <span class="text-sm">📊</span>
+              </div>
+              <div>
+                <div class="font-medium">${activity.platform} - ${activity.type}</div>
+                <div class="text-xs text-gray-400">${activity.time}</div>
+              </div>
+            </div>
+            <div class="text-green-400 font-medium">+$${activity.amount.toFixed(2)}</div>
+          `;
+          activityContainer.appendChild(activityEl);
+        });
+      } catch (error) {
+        console.error('Failed to load recent activity:', error);
+        showError('Data Load Error', 'Could not load recent activity data.');
+      }
+    }
+  </script>
+
+  <script>
+    // Main initialization function
+    async function initializeDashboard() {
+      try {
+        // Update loading text
+        document.getElementById('loading-text').textContent = 'Checking authentication...';
+        
+        // Check authentication
+        const userData = localStorage.getItem('mnz_user');
+        if (!userData) {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const user = JSON.parse(userData);
+        
+        // Update user info
+        document.getElementById('user-email').textContent = user.email || 'user@example.com';
+        document.getElementById('profile-email').textContent = user.email || 'user@example.com';
+        document.getElementById('profile-username').textContent = user.username || 'username';
+        
+        // Initialize components sequentially with delays to prevent overload
+        document.getElementById('loading-text').textContent = 'Loading background effects...';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        initParticleBackground('threejs-bg');
+        
+        document.getElementById('loading-text').textContent = 'Loading user data...';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        loadUserData();
+        
+        document.getElementById('loading-text').textContent = 'Loading platform statistics...';
+        await new Promise(resolve => setTimeout(resolve, 300));
+        loadPlatformStats();
+        
+        document.getElementById('loading-text').textContent = 'Loading earnings chart...';
+        await new Promise(resolve => setTimeout(resolve, 300));
+        initEarningsChart();
+        
+        document.getElementById('loading-text').textContent = 'Loading recent activity...';
+        await new Promise(resolve => setTimeout(resolve, 300));
+        loadRecentActivity();
+        
+        // Hide loading overlay with a slight delay
+        setTimeout(() => {
+          document.getElementById('loading-overlay').classList.add('hidden');
+        }, 500);
+        
+      } catch (error) {
+        console.error('Dashboard initialization failed:', error);
+        showError('Initialization Error', 'Failed to initialize dashboard. Please refresh the page.');
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
+    }
+
+    // Enhanced loadUserData function
+    async function loadUserData() {
+      try {
+        // Simulated data - replace with actual API call
+        const userData = JSON.parse(localStorage.getItem('mnz_user') || '{}');
+        const mockData = {
+          totalEarned: userData.totalEarned || 142.50,
+          availableCash: userData.availableCash || 42.50,
+          pendingCash: userData.pendingCash || 25.75,
+          withdrawnCash: userData.withdrawnCash || 74.25,
+          memberSince: userData.memberSince || 'Jan 2023',
+          lastLogin: userData.lastLogin || 'Today at ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        };
+
+        document.getElementById('total-earned').textContent = `$${mockData.totalEarned.toFixed(2)}`;
+        document.getElementById('available-cash').textContent = `$${mockData.availableCash.toFixed(2)}`;
+        document.getElementById('pending-cash').textContent = `$${mockData.pendingCash.toFixed(2)}`;
+        document.getElementById('withdrawn-cash').textContent = `$${mockData.withdrawnCash.toFixed(2)}`;
+        document.getElementById('member-since').textContent = mockData.memberSince;
+        document.getElementById('last-login').textContent = mockData.lastLogin;
+
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+        showError('Data Load Error', 'Could not load user financial data.');
+      }
+    }
+    
+    // Load platform statistics
+    async function loadPlatformStats() {
+      try {
+        // Simulated data - replace with actual API calls
+        const stats = {
+          cpxSurveys: 12,
+          cpxEarnings: 28.50,
+          bitlabsTasks: 8,
+          bitlabsEarnings: 14.20,
+          freecashOffers: 5,
+          freecashEarnings: 32.75,
+          pollpayPolls: 15,
+          pollpayEarnings: 11.25
+        };
+        
+        document.getElementById('cpx-surveys').textContent = stats.cpxSurveys;
+        document.getElementById('cpx-earnings').textContent = `$${stats.cpxEarnings.toFixed(2)}`;
+        document.getElementById('bitlabs-tasks').textContent = stats.bitlabsTasks;
+        document.getElementById('bitlabs-earnings').textContent = `$${stats.bitlabsEarnings.toFixed(2)}`;
+        document.getElementById('freecash-offers').textContent = stats.freecashOffers;
+        document.getElementById('freecash-earnings').textContent = `$${stats.freecashEarnings.toFixed(2)}`;
+        document.getElementById('pollpay-polls').textContent = stats.pollpayPolls;
+        document.getElementById('pollpay-earnings').textContent = `$${stats.pollpayEarnings.toFixed(2)}`;
+        
+      } catch (error) {
+        console.error('Failed to load platform stats:', error);
+        showError('Data Load Error', 'Could not load platform statistics.');
+      }
+    }
+
+    // Start initialization when DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', initializeDashboard);
+  </script>
+</body>
+</html>

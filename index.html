@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNZ Digital State - Planetary-Grade Sovereign Infrastructure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark-bg: #0f172a;
+            --darker-bg: #0a0f1d;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-gradient);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="glass-card mx-4 mt-4 p-4 md:p-6 flex items-center justify-between">
+        <div class="flex items-center">
+            <a href="index.html" class="text-2xl font-bold gradient-text">MNZ DIGITAL STATE</a>
+        </div>
+        
+        <div class="hidden md:flex space-x-6">
+            <a href="index.html" class="text-white hover:text-blue-400 transition-colors">Home</a>
+            <a href="offerwall.html" class="text-white hover:text-blue-400 transition-colors">Earn</a>
+            <a href="crypto.html" class="text-white hover:text-blue-400 transition-colors">Crypto</a>
+            <a href="helpdesk.html" class="text-white hover:text-blue-400 transition-colors">Support</a>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <a href="register.html" class="btn-secondary px-4 py-2 rounded-md text-white font-medium">Join Now</a>
+            <a href="dashboard.html" class="btn-primary px-4 py-2 rounded-md text-white font-medium">Login</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-16 md:py-24 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 gradient-text floating">
+            Planetary-Grade Sovereign Infrastructure
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto">
+            Next-generation earning platforms, crypto integration, and AI-powered digital identity—all secured with quantum-grade protocols.
+        </p>
+        
+        <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+            <a href="register.html" class="btn-primary px-8 py-4 rounded-lg text-white font-bold text-lg">
+                Create Sovereign Identity
+            </a>
+            <a href="offerwall.html" class="btn-secondary px-8 py-4 rounded-lg text-white font-bold text-lg">
+                Start Earning Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 gradient-text">
+            Sovereign-Grade Features
+        </h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">💰</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">Multi-Platform Earnings</h3>
+                <p class="text-gray-300 text-center">
+                    Access CPX, Bitlabs, and other premium earning platforms through a unified interface.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-purple-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">🔗</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">Crypto Integration</h3>
+                <p class="text-gray-300 text-center">
+                    Trade and manage cryptocurrencies with Binance API integration and secure wallet connections.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">🤖</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">AI-Powered Support</h3>
+                <p class="text-gray-300 text-center">
+                    24/7 AI assistance for all your questions about earning, withdrawals, and platform features.
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-red-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">🛡️</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">Quantum Security</h3>
+                <p class="text-gray-300 text-center">
+                    Military-grade encryption and quantum-resistant protocols to protect your digital sovereignty.
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-yellow-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">🌐</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">Global Access</h3>
+                <p class="text-gray-300 text-center">
+                    Available worldwide with multi-currency support and localized earning opportunities.
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="glass-card p-6 feature-card pulse">
+                <div class="w-16 h-16 bg-indigo-900 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span class="text-2xl">⚡</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-center">Instant Withdrawals</h3>
+                <p class="text-gray-300 text-center">
+                    Fast withdrawal processing to PayPal, crypto wallets, and bank accounts with low minimums.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="container mx-auto px-4 py-16 glass-card mt-16">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <div class="text-3xl md:text-4xl font-bold gradient-text" id="stats-users">12,483</div>
+                <div class="text-gray-400 mt-2">Active Users</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-bold gradient-text">$542,760</div>
+                <div class="text-gray-400 mt-2">Total Earned</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-bold gradient-text">892,345</div>
+                <div class="text-gray-400 mt-2">Surveys Completed</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-bold gradient-text">99.98%</div>
+                <div class="text-gray-400 mt-2">Uptime</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="container mx-auto px-4 py-16 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 gradient-text">
+            Ready to Join the Digital Sovereignty Revolution?
+        </h2>
+        <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+            Create your account today and start earning across multiple platforms with enhanced security and AI-powered features.
+        </p>
+        <a href="register.html" class="btn-primary px-8 py-4 rounded-lg text-white font-bold text-lg inline-block">
+            Get Started Now
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-card mt-16 p-8 text-center">
+        <div class="mb-6">
+            <a href="index.html" class="text-2xl font-bold gradient-text">MNZ DIGITAL STATE</a>
+        </div>
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="index.html" class="text-gray-400 hover:text-white">Home</a>
+            <a href="offerwall.html" class="text-gray-400 hover:text-white">Earn</a>
+            <a href="crypto.html" class="text-gray-400 hover:text-white">Crypto</a>
+            <a href="helpdesk.html" class="text-gray-400 hover:text-white">Support</a>
+            <a href="dashboard.html" class="text-gray-400 hover:text-white">Dashboard</a>
+        </div>
+        <div class="text-gray-500 text-sm">
+            &copy; 2024 MNZ Digital State. All rights reserved. Quantum-grade security for the digital age.
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Three.js particle background
+        function initParticleBackground() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            
+            // Set canvas size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Initialize Three.js
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1500;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            const colorArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+                colorArray[i] = Math.random();
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 5;
+            
+            // Mouse movement effect
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.x += 0.0005;
+                particlesMesh.rotation.y += 0.001;
+                
+                // Move particles based on mouse position
+                particlesMesh.position.x = mouseX * 0.5;
+                particlesMesh.position.y = mouseY * 0.5;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticleBackground();
+            
+            // Animate stats counter
+            const statsElement = document.getElementById('stats-users');
+            if (statsElement) {
+                let current = 0;
+                const target = 12483;
+                const duration = 2000;
+                const steps = 60;
+                const increment = target / steps;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    statsElement.textContent = Math.round(current).toLocaleString();
+                }, duration / steps);
+            }
+        });
+    </script>
+</body>
+</html>

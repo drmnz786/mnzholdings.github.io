@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - MNZ Digital State</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --dark-bg: #0f172a;
+      --darker-bg: #0a0f1d;
+    }
+    
+    body {
+      background: var(--dark-bg);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    
+    #threejs-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+    }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+    }
+    
+    .gradient-text {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen">
+  <!-- Three.js Background -->
+  <div id="threejs-bg"></div>
+
+  <!-- Navigation -->
+  <nav class="flex items-center justify-between p-6 glass-card mx-6 mt-4">
+    <div class="flex items-center">
+      <a href="index.html" class="text-2xl font-bold gradient-text">MNZ DIGITAL STATE</a>
+    </div>
+    <div class="hidden md:flex space-x-6">
+      <a href="index.html" class="hover:text-blue-400 transition-colors">Home</a>
+      <a href="offerwall.html" class="hover:text-blue-400 transition-colors">Earn</a>
+      <a href="crypto.html" class="hover:text-blue-400 transition-colors">Crypto</a>
+      <a href="helpdesk.html" class="hover:text-blue-400 transition-colors">Support</a>
+    </div>
+    <div class="flex items-center">
+      <a href="login.html" class="text-gray-400 hover:text-white mr-4">Login</a>
+      <a href="index.html" class="btn-primary px-4 py-2 rounded-md text-white font-medium">Home</a>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-10 flex items-center justify-center">
+    <div class="glass-card p-8 w-full max-w-md floating">
+      <h1 class="text-3xl font-bold mb-6 gradient-text text-center">Create Account</h1>
+      
+      <form id="register-form">
+        <div class="mb-4">
+          <label for="username" class="block text-gray-300 mb-2">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username"
+            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your username"
+            required
+          >
+          <p class="text-red-400 text-sm mt-1 hidden" id="username-error"></p>
+        </div>
+        
+        <div class="mb-4">
+          <label for="email" class="block text-gray-300 mb-2">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your email"
+            required
+          >
+          <p class="text-red-400 text-sm mt-1 hidden" id="email-error"></p>
+        </div>
+        
+        <div class="mb-4">
+          <label for="password" class="block text-gray-300 mb-2">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Create a strong password"
+            required
+          >
+          <p class="text-gray-400 text-xs mt-1">Must be at least 8 characters</p>
+          <p class="text-red-400 text-sm mt-1 hidden" id="password-error"></p>
+        </div>
+        
+        <div class="mb-6">
+          <label for="confirm-password" class="block text-gray-300 mb-2">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirm-password" 
+            name="confirmPassword"
+            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Confirm your password"
+            required
+          >
+          <p class="text-red-400 text-sm mt-1 hidden" id="confirm-password-error"></p>
+        </div>
+        
+        <div class="mb-6">
+          <div class="flex items-center">
+            <input 
+              type="checkbox" 
+              id="terms" 
+              name="terms"
+              class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+              required
+            >
+            <label for="terms" class="ml-2 text-sm text-gray-300">
+              I agree to the <a href="#" class="text-blue-400 hover:underline">Terms of Service</a> and <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a>
+            </label>
+          </div>
+          <p class="text-red-400 text-sm mt-1 hidden" id="terms-error"></p>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="w-full btn-primary py-3 rounded-md text-white font-medium"
+          id="register-btn"
+        >
+          Create Account
+        </button>
+        
+        <div class="mt-6 text-center">
+          <p class="text-gray-400">
+            Already have an account? 
+            <a href="login.html" class="text-blue-400 hover:underline">Sign in</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // Initialize Three.js background
+    function initParticleBackground(elementId) {
+      const container = document.getElementById(elementId);
+      if (!container) return;
+      
+      // Set up the scene
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+      
+      // Create particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 1500;
+      
+      const posArray = new Float32Array(particlesCount * 3);
+      const colorArray = new Float32Array(particlesCount * 3);
+      
+      for (let i = 0; i < particlesCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 10;
+          colorArray[i] = Math.random();
+      }
+      
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+      
+      const particlesMaterial = new THREE.PointsMaterial({
+          size: 0.05,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8
+      });
+      
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+      
+      camera.position.z = 5;
+      
+      // Animation
+      function animate() {
+          requestAnimationFrame(animate);
+          
+          particlesMesh.rotation.x += 0.0005;
+          particlesMesh.rotation.y += 0.001;
+          
+          renderer.render(scene, camera);
+      }
+      
+      animate();
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+    
+    // Form validation and submission
+    document.addEventListener('DOMContentLoaded', function() {
+      initParticleBackground('threejs-bg');
+      
+      const registerForm = document.getElementById('register-form');
+      const usernameError = document.getElementById('username-error');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      const confirmPasswordError = document.getElementById('confirm-password-error');
+      const termsError = document.getElementById('terms-error');
+      const registerBtn = document.getElementById('register-btn');
+      
+      registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Reset error messages
+        usernameError.classList.add('hidden');
+        emailError.classList.add('hidden');
+        passwordError.classList.add('hidden');
+        confirmPasswordError.classList.add('hidden');
+        termsError.classList.add('hidden');
+        
+        // Get form values
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const terms = document.getElementById('terms').checked;
+        
+        let isValid = true;
+        
+        // Validate username
+        if (username.length < 3) {
+          usernameError.textContent = 'Username must be at least 3 characters';
+          usernameError.classList.remove('hidden');
+          isValid = false;
+        }
+        
+        // Validate email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          emailError.textContent = 'Please enter a valid email address';
+          emailError.classList.remove('hidden');
+          isValid = false;
+        }
+        
+        // Validate password
+        if (password.length < 8) {
+          passwordError.textContent = 'Password must be at least 8 characters';
+          passwordError.classList.remove('hidden');
+          isValid = false;
+        }
+        
+        // Validate confirm password
+        if (password !== confirmPassword) {
+          confirmPasswordError.textContent = 'Passwords do not match';
+          confirmPasswordError.classList.remove('hidden');
+          isValid = false;
+        }
+        
+        // Validate terms
+        if (!terms) {
+          termsError.textContent = 'You must accept the terms and conditions';
+          termsError.classList.remove('hidden');
+          isValid = false;
+        }
+        
+        if (!isValid) return;
+        
+        // Disable button and show loading state
+        registerBtn.disabled = true;
+        registerBtn.textContent = 'Creating Account...';
+        
+        try {
+          // Send registration request to server
+          const response = await fetch('http://localhost:3000/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Store user data in localStorage
+            localStorage.setItem('mnz_user', JSON.stringify(data.user));
+            localStorage.setItem('mnz_token', data.token);
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+          } else {
+            // Show error message
+            if (data.error.includes('already exists')) {
+              emailError.textContent = data.error;
+              emailError.classList.remove('hidden');
+            } else {
+              alert('Registration failed: ' + data.error);
+            }
+          }
+        } catch (error) {
+          console.error('Registration error:', error);
+          alert('An error occurred during registration. Please try again.');
+        } finally {
+          // Re-enable button
+          registerBtn.disabled = false;
+          registerBtn.textContent = 'Create Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
